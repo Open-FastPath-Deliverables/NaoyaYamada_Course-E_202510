@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ステージ確認</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- スタイルシートへのリンク -->
+    <script>
+        // ステージを更新（ランクアップまたはダウン）する関数
+        async function updateStage(userId) {
+            try {
+                const response = await fetch(`/loyalty/stage/update?userId=${userId}`, {
+                    method: "GET" // ステージ更新APIへのGETリクエスト
+                });
+
+                // レスポンスの結果を受け取り表示
+                const result = await response.text();
+                alert(result);
+
+                // 成功した場合ページをリロードして最新状態を表示
+                if (result.includes("成功")) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error("ステージ更新処理でエラーが発生しました:", error);
+                alert("ステージ更新に失敗しました。再試行してください。");
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>ステージ確認</h1>
+    </header>
+    <main>
+        <!-- ユーザーの現在のステージを表示 -->
+        <section>
+            <h2>現在のステージ</h2>
+            <p>あなたのステージ: <span th:text="${stage.currentStage}">ブロンズ</span></p>
+            <p>ステージ説明: <span th:text="${stage.description}">初期ステージです。</span></p>
+        </section>
+
+        <!-- 次のステージ条件を表示 -->
+        <section>
+            <h2>次のステージ</h2>
+            <p>次のステージ: <span th:text="${stage.nextStage}">シルバー</span></p>
+            <p>必要ポイント数（次のステージまで）: <span th:text="${stage.pointsToNextStage}">500</span> ポイント</p>
+        </section>
+
+        <!-- ステージ更新ボタン -->
+        <section>
+            <h2>ステージ更新</h2>
+            <button type="button" onclick="updateStage('[[${stage.userId}]]')">ステージを更新する</button>
+        </section>
+    </main>
+    <footer>
+        <p>ロイヤルティプログラム &copy; 2023</p>
+    </footer>
+</body>
+</html>

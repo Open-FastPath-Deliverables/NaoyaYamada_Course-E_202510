@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ポイント利用</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- スタイルシートへのリンク -->
+    <script>
+        // ポイント使用処理を非同期で行う関数
+        async function usePoints(userId) {
+            const pointsToUse = document.getElementById("pointsToUse").value;
+
+            // 入力チェック: ポイントが空の場合は処理しない
+            if (!pointsToUse || pointsToUse <= 0) {
+                alert("使用するポイント数を正確に入力してください。");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/loyalty/points/use?userId=${userId}&points=${pointsToUse}`, {
+                    method: "POST"
+                });
+
+                // レスポンスのテキスト（成功/失敗メッセージ）を受け取る
+                const result = await response.text();
+                alert(result);
+
+                // 成功の場合、ページをリロードして最新のポイント数を表示
+                if (result.includes("正常に使用")) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error("ポイント使用処理中にエラーが発生しました: ", error);
+                alert("ポイント使用処理に失敗しました。再試行してください。");
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>ポイント利用</h1>
+    </header>
+    <main>
+        <!-- 利用可能なポイント数を表示 -->
+        <section>
+            <h2>利用可能なポイント</h2>
+            <p>現在利用可能なポイント数: <span th:text="${availablePoints}">0</span> ポイント</p>
+        </section>
+
+        <!-- ポイントを使用するフォーム -->
+        <section>
+            <h2>ポイントを使用する</h2>
+            <form id="pointUsageForm" onsubmit="event.preventDefault(); usePoints('[[${userId}]]');">
+                <label for="pointsToUse">使用するポイント数:</label>
+                <input type="number" id="pointsToUse" name="pointsToUse" min="1" placeholder="例: 100" required>
+                <button type="submit">ポイントを使用する</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>ロイヤルティプログラム &copy; 2023</p>
+    </footer>
+</body>
+</html>

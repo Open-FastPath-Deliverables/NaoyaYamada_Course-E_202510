@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>特典確認</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- スタイルシートへのリンク -->
+    <script>
+        // 特定の特典を適用するための非同期処理関数
+        async function applyBenefit(benefitId, userId) {
+            try {
+                const response = await fetch(`/loyalty/benefits/apply/${benefitId}?userId=${userId}`, {
+                    method: "POST" // POSTリクエストを送信
+                });
+                
+                // レスポンスメッセージを受け取りユーザーに表示
+                const result = await response.text();
+                alert(result);
+
+                // 成功の場合はページをリロードして特典適用の最新情報を表示
+                if (result.includes("特典を正常に適用しました")) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error("特典適用処理でエラーが発生しました:", error);
+                alert("特典適用に失敗しました。再試行してください。");
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>ロイヤルティ特典</h1>
+    </header>
+    <main>
+        <!-- 利用可能な特典をリスト表示 -->
+        <section>
+            <h2>利用可能な特典</h2>
+            <p>以下は現在利用可能な特典です:</p>
+            <ul>
+                <!-- 特典リストを動的に生成 -->
+                <li th:each="benefit : ${benefitsList}">
+                    <h3 th:text="${benefit.name}">特典名</h3>
+                    <p>説明: <span th:text="${benefit.description}">特典の説明</span></p>
+                    <p>必要ランク: <span th:text="${benefit.requiredRank}">ブロンズ</span></p>
+                    <button type="button"
+                            th:attr="onclick='applyBenefit([[${benefit.id}]], [[${userId}]])'">
+                        この特典を受け取る
+                    </button>
+                </li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>ロイヤルティプログラム &copy; 2023</p>
+    </footer>
+</body>
+</html>

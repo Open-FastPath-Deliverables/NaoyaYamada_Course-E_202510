@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ポイント履歴</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- スタイルシートへのリンク -->
+</head>
+<body>
+    <header>
+        <h1>ポイント履歴</h1>
+    </header>
+    <main>
+        <!-- ユーザーのポイント履歴を時系列で確認する表 -->
+        <section>
+            <h2>ポイント履歴詳細</h2>
+            <!-- ポイント履歴が存在する場合 -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>ポイント変動量</th>
+                        <th>理由</th>
+                        <th>残高</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Thymeleaf: 履歴データをループで表示 -->
+                    <tr th:each="pointHistory : ${pointHistoryList}">
+                        <td th:text="${pointHistory.date}">2023-01-01</td>
+                        <td th:text="${pointHistory.changeQuantity}">+100</td>
+                        <td th:text="${pointHistory.reason}">購入</td>
+                        <td th:text="${pointHistory.balance}">500</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- ポイント履歴が存在しない場合 -->
+            <div th:if="${pointHistoryList.isEmpty()}">
+                <p>現在、ポイント履歴はありません。</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>ロイヤルティプログラム &copy; 2023</p>
+    </footer>
+</body>
+</html>
